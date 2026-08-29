@@ -223,14 +223,29 @@
   .skill-pill .chk{color:var(--accent); font-family:'JetBrains Mono',monospace;}
 
   /* ---------- projects ---------- */
-  .projects-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  .projects-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:22px;}
   @media (max-width:900px){ .projects-grid{grid-template-columns:1fr;} }
   .project-card{
     background:var(--bg-surface); border:1px solid var(--border);
-    border-radius:var(--radius); padding:26px; display:flex; flex-direction:column;
+    border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column;
     transition:border-color .2s, transform .15s;
   }
   .project-card:hover{border-color:var(--accent-line); transform:translateY(-4px);}
+  .project-card .card-body{padding:22px 26px 26px;}
+  .project-thumb{
+    width:100%; aspect-ratio:16/10; object-fit:cover; display:block;
+    background:var(--bg-surface-2); border-bottom:1px solid var(--border);
+  }
+  .project-thumb-placeholder{
+    width:100%; aspect-ratio:16/10; display:flex; align-items:center; justify-content:center;
+    background:
+      linear-gradient(135deg, var(--bg-surface-2) 25%, transparent 25%) -10px 0/20px 20px,
+      linear-gradient(225deg, var(--bg-surface-2) 25%, transparent 25%) -10px 0/20px 20px,
+      var(--bg-surface);
+    border-bottom:1px solid var(--border);
+    color:var(--text-faint); font-family:'JetBrains Mono',monospace; font-size:.7rem;
+    text-transform:uppercase; letter-spacing:.08em;
+  }
   .project-card .idx{
     font-family:'JetBrains Mono',monospace; color:var(--accent); font-size:.78rem; margin-bottom:14px;
   }
@@ -244,6 +259,10 @@
   }
   .project-link{margin-top:16px; font-size:.85rem; color:var(--text-muted); display:inline-flex; align-items:center; gap:6px;}
   .project-link:hover{color:var(--accent);}
+  .link-row{display:flex; flex-wrap:wrap; gap:18px; align-items:center;}
+  .link-row .project-link{margin-top:16px;}
+  .video-link{color:var(--gold);}
+  .video-link:hover{color:var(--gold); opacity:.8;}
 
   /* ---------- certifications — literal stamp cards ---------- */
   .cert-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
@@ -469,7 +488,7 @@ const content = {
   // KPI strip on the hero — quick, scannable numbers
   kpis: [
     { num: "3+", label: "Years in Finance" },
-    { num: "3", label: "BI Dashboards Built" },
+    { num: "4", label: "Projects Shipped" },
     { num: "1,020", label: "Employees Analyzed" },
     { num: "$770K", label: "Revenue Tracked" },
   ],
@@ -503,30 +522,50 @@ const content = {
   ],
 
   // 👉 To add a project: copy one block below, edit the fields, add a comma.
+  //    "image" is the file name of a screenshot you upload into the /images
+  //    folder of this repo (e.g. "images/hr-dashboard.png"). Leave it as ""
+  //    (empty quotes) if you don't have an image yet — a placeholder shows instead.
+  //    "video" is an optional Loom (or any video) link — leave "" to hide the button.
   projects: [
     {
       title: "Automated AI LinkedIn Content Creation (n8n)",
       description: "An automated workflow using n8n that generates and publishes LinkedIn content with AI, cutting manual content work.",
       tags: ["n8n", "AI", "Automation"],
       link: "#",
+      image: "images/linkedin-automation.png",
+      video: "https://www.loom.com/share/967cdd17e13a4a529dec81d67934209b",
     },
     {
       title: "Employee Performance & Workforce Analytics",
       description: "A Power BI dashboard analyzing 1,020 employees across 6 departments and 6 regions — salary, bonus, and headcount trends.",
       tags: ["Power BI", "HR Analytics", "Dashboard"],
       link: "#",
+      image: "images/hr-dashboard.png",
+      video: "",
     },
     {
       title: "Interactive Sales Analysis Dashboard",
       description: "An end-to-end Power BI dashboard tracking $770.64K in revenue, 117K units, and 254 products across regions and payment types.",
       tags: ["Power BI", "Power Query", "Data Cleaning"],
       link: "#",
+      image: "images/sales-dashboard.png",
+      video: "https://www.loom.com/share/573f6c5fffc84a50b1cafc1251825a80",
+    },
+    {
+      title: "Automated Data Cleaning & Dashboard Pipeline (n8n)",
+      description: "An n8n workflow that ingests a raw, dirty dataset from Google Sheets, profiles it, lets AI plan the cleaning steps, applies the cleaning automatically, exports it to Excel, and builds a dashboard from the result.",
+      tags: ["n8n", "AI", "Data Cleaning", "Automation"],
+      link: "#",
+      image: "images/data-cleaning-pipeline.png",
+      video: "https://drive.google.com/file/d/1MAyftrtj6Vn8damFx11GMyKhCBdbTJd5/view?usp=sharing",
     },
     // {
     //   title: "New project title",
     //   description: "One or two sentences about what it does.",
     //   tags: ["Tag1", "Tag2"],
     //   link: "https://github.com/hegabshiref4-bit/repo-name",
+    //   image: "images/new-project.png",
+    //   video: "",
     // },
   ],
 
@@ -582,13 +621,33 @@ document.getElementById('skills-grid').innerHTML = content.skills.map(s => `
 
 document.getElementById('projects-grid').innerHTML = content.projects.map((p, i) => `
   <div class="project-card">
-    <div class="idx">${String(i + 1).padStart(2, '0')}</div>
-    <h3>${p.title}</h3>
-    <p>${p.description}</p>
-    <div class="tag-row">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
-    ${p.link ? `<a class="project-link" href="${p.link}" target="_blank">View project →</a>` : ''}
+    ${p.image
+      ? `<img class="project-thumb" src="${p.image}" alt="${p.title}" data-fallback="1">`
+      : `<div class="project-thumb-placeholder">No image yet</div>`
+    }
+    <div class="card-body">
+      <div class="idx">${String(i + 1).padStart(2, '0')}</div>
+      <h3>${p.title}</h3>
+      <p>${p.description}</p>
+      <div class="tag-row">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      <div class="link-row">
+        ${p.link && p.link !== '#' ? `<a class="project-link" href="${p.link}" target="_blank">View project →</a>` : ''}
+        ${p.video ? `<a class="project-link video-link" href="${p.video}" target="_blank">▶ Watch demo</a>` : ''}
+      </div>
+    </div>
   </div>
 `).join('');
+
+// If an image path doesn't exist yet, swap it for the placeholder instead of
+// showing a broken-image icon.
+document.querySelectorAll('.project-thumb[data-fallback]').forEach(img => {
+  img.addEventListener('error', () => {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'project-thumb-placeholder';
+    placeholder.textContent = 'No image yet';
+    img.replaceWith(placeholder);
+  });
+});
 
 document.getElementById('cert-grid').innerHTML = content.certifications.map(c => `
   <div class="cert-card">
