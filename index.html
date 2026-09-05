@@ -1076,3 +1076,1081 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sherif Mohamed Hegab — Data Analytics</title>
+<meta name="description" content="Sherif Mohamed Hegab — Accountant transitioning into Data Analytics. Dashboards, automation, and financial data insight." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS — the whole visual identity lives here.
+     Ledger-green / ink-stamp theme: nods to an accounting past
+     stamping its way into a data-analytics future.
+     ============================================================ */
+  :root{
+    --bg: #0B1210;
+    --bg-surface: #101917;
+    --bg-surface-2: #16211D;
+    --text: #ECEFEC;
+    --text-muted: #8FA39B;
+    --text-faint: #5C6E67;
+    --accent: #34D399;
+    --accent-soft: rgba(52,211,153,.14);
+    --accent-line: rgba(52,211,153,.35);
+    --gold: #C9A227;
+    --gold-soft: rgba(201,162,39,.14);
+    --border: rgba(255,255,255,.08);
+    --radius: 14px;
+    --maxw: 1040px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',serif;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  section{padding:96px 24px;}
+  .wrap{max-width:var(--maxw);margin:0 auto;}
+
+  /* subtle grid texture on the background, like ledger paper */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 42px 42px;
+    pointer-events:none;
+    z-index:0;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
+  }
+
+  /* ---------- nav ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    backdrop-filter:blur(10px);
+    background:rgba(11,18,16,.75);
+    border-bottom:1px solid var(--border);
+  }
+  nav .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 24px;
+  }
+  .brand{font-family:'Fraunces',serif; font-weight:700; font-size:1.05rem;}
+  .brand span{color:var(--accent);}
+  nav ul{list-style:none; display:flex; gap:28px; margin:0; padding:0;}
+  nav a{font-size:.9rem; color:var(--text-muted); transition:color .2s;}
+  nav a:hover{color:var(--accent);}
+  .navtoggle{display:none;}
+  @media (max-width:720px){
+    nav ul{display:none;}
+  }
+
+  /* ---------- stamp element — the signature motif ---------- */
+  .stamp{
+    display:inline-flex; align-items:center; gap:8px;
+    border:1.5px solid var(--accent);
+    color:var(--accent);
+    border-radius:999px;
+    padding:8px 18px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    transform:rotate(-3deg);
+    position:relative;
+  }
+  .stamp::before{
+    content:"";
+    position:absolute; inset:3px;
+    border:1px dashed var(--accent-line);
+    border-radius:999px;
+  }
+  .stamp .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);}
+
+  /* ---------- hero ---------- */
+  .hero{padding-top:120px; position:relative; z-index:1;}
+  .hero-grid{
+    display:grid; grid-template-columns:1.3fr .9fr; gap:56px; align-items:center;
+  }
+  @media (max-width:820px){ .hero-grid{grid-template-columns:1fr;} }
+  .eyebrow{color:var(--text-muted); font-size:1.05rem; margin-bottom:14px;}
+  .hero h1{
+    font-size:clamp(2.6rem, 6vw, 4.4rem);
+    font-weight:700;
+    line-height:1.02;
+    color:var(--accent);
+  }
+  .hero .role{
+    font-family:'Fraunces',serif; font-style:italic; font-weight:500;
+    font-size:clamp(1.3rem, 2.6vw, 1.8rem);
+    color:var(--text); margin-top:10px;
+  }
+  .hero p.lead{
+    color:var(--text-muted); max-width:52ch; margin-top:22px; font-size:1.02rem;
+  }
+  .hero-actions{display:flex; gap:14px; margin-top:32px; flex-wrap:wrap;}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:13px 24px; border-radius:10px;
+    font-weight:600; font-size:.92rem;
+    transition:transform .15s ease, background .2s;
+  }
+  .btn-primary{background:var(--accent); color:#08130F;}
+  .btn-primary:hover{transform:translateY(-2px);}
+  .btn-ghost{border:1px solid var(--border); color:var(--text);}
+  .btn-ghost:hover{border-color:var(--accent-line); color:var(--accent);}
+
+  .portrait-wrap{
+    position:relative; justify-self:center;
+  }
+  .portrait{
+    width:240px; height:240px; border-radius:50%;
+    background:var(--bg-surface-2);
+    border:2px solid var(--accent-line);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-size:4rem; color:var(--accent);
+    position:relative;
+    overflow:hidden;
+  }
+  .portrait img{
+    width:100%; height:100%; object-fit:cover; border-radius:50%;
+  }
+  .portrait::after{
+    content:""; position:absolute; inset:-14px;
+    border:1px dashed var(--accent-line); border-radius:50%;
+    pointer-events:none;
+  }
+
+  /* KPI strip — echoes the dashboards he actually builds */
+  .kpi-strip{
+    display:grid; grid-template-columns:repeat(4,1fr);
+    gap:1px; background:var(--border);
+    border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden; margin-top:64px;
+  }
+  @media (max-width:720px){ .kpi-strip{grid-template-columns:repeat(2,1fr);} }
+  .kpi{background:var(--bg-surface); padding:22px 20px;}
+  .kpi .num{font-family:'JetBrains Mono',monospace; font-size:1.5rem; color:var(--accent); font-weight:600;}
+  .kpi .label{color:var(--text-muted); font-size:.78rem; margin-top:4px; text-transform:uppercase; letter-spacing:.06em;}
+
+  /* ---------- section heads ---------- */
+  .section-head{margin-bottom:48px;}
+  .section-head .kicker{
+    color:var(--accent); font-family:'JetBrains Mono',monospace;
+    font-size:.75rem; letter-spacing:.16em; text-transform:uppercase;
+    display:flex; align-items:center; gap:10px;
+  }
+  .section-head .kicker::before{content:"§"; opacity:.7;}
+  .section-head h2{font-size:clamp(1.7rem,3.4vw,2.4rem); margin-top:10px;}
+
+  /* ---------- about ---------- */
+  .about-text{color:var(--text-muted); font-size:1.05rem; max-width:70ch;}
+  .about-text strong{color:var(--text); font-weight:600;}
+
+  /* ---------- timeline (experience + education) ---------- */
+  .cols-2{display:grid; grid-template-columns:1fr 1fr; gap:48px;}
+  @media (max-width:820px){ .cols-2{grid-template-columns:1fr;} }
+  .timeline-item{
+    position:relative; padding-left:26px; border-left:1px solid var(--border);
+    padding-bottom:32px; cursor:pointer; transition:transform .15s ease;
+  }
+  .timeline-item:hover{transform:translateX(4px);}
+  .timeline-item:hover h3{color:var(--accent);}
+  .timeline-item:last-child{padding-bottom:0;}
+  .timeline-item::before{
+    content:""; position:absolute; left:-6px; top:2px;
+    width:11px; height:11px; border-radius:50%;
+    background:var(--bg); border:2px solid var(--accent);
+  }
+  .timeline-item h3{font-size:1.08rem; font-weight:600; font-family:'Inter',sans-serif;}
+  .timeline-item .org{color:var(--accent); font-size:.92rem; margin-top:2px;}
+  .timeline-item .period{
+    color:var(--text-faint); font-family:'JetBrains Mono',monospace; font-size:.76rem;
+    margin-top:6px; text-transform:uppercase; letter-spacing:.05em;
+  }
+  .timeline-item ul{margin:12px 0 0; padding-left:18px; color:var(--text-muted); font-size:.92rem;}
+  .timeline-item li{margin-bottom:6px;}
+  .subhead{
+    font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--text-muted);
+    text-transform:uppercase; letter-spacing:.12em; margin-bottom:24px;
+  }
+
+  /* ---------- skills ---------- */
+  .skills-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
+  @media (max-width:720px){ .skills-grid{grid-template-columns:repeat(2,1fr);} }
+  .skill-pill{
+    background:var(--bg-surface); border:1px solid var(--border);
+    border-radius:10px; padding:14px 16px;
+    display:flex; align-items:center; gap:10px;
+    font-size:.9rem; transition:border-color .2s, transform .15s;
+  }
+  .skill-pill:hover{border-color:var(--accent-line); transform:translateY(-2px);}
+  .skill-pill .chk{color:var(--accent); font-family:'JetBrains Mono',monospace;}
+
+  /* ---------- projects ---------- */
+  .filter-row{
+    display:flex; flex-wrap:wrap; gap:10px; margin-bottom:32px;
+  }
+  .filter-btn{
+    font-family:'JetBrains Mono',monospace; font-size:.78rem;
+    background:var(--bg-surface); border:1px solid var(--border);
+    color:var(--text-muted); padding:8px 16px; border-radius:999px;
+    cursor:pointer; transition:border-color .2s, color .2s, background .2s;
+  }
+  .filter-btn:hover{border-color:var(--accent-line); color:var(--text);}
+  .filter-btn.active{background:var(--accent-soft); border-color:var(--accent-line); color:var(--accent);}
+
+  .projects-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:22px;}
+  @media (max-width:900px){ .projects-grid{grid-template-columns:1fr;} }
+  .project-card{
+    background:var(--bg-surface); border:1px solid var(--border);
+    border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column;
+    transition:border-color .2s, transform .15s, box-shadow .2s;
+    cursor:pointer;
+  }
+  .project-card:hover{border-color:var(--accent-line); transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,.35);}
+  .project-card.hidden{display:none;}
+  .project-card .card-body{padding:22px 26px 26px;}
+  .project-thumb{
+    width:100%; aspect-ratio:16/10; object-fit:cover; display:block;
+    background:var(--bg-surface-2); border-bottom:1px solid var(--border);
+  }
+  .project-thumb-placeholder{
+    width:100%; aspect-ratio:16/10; display:flex; align-items:center; justify-content:center;
+    background:
+      linear-gradient(135deg, var(--bg-surface-2) 25%, transparent 25%) -10px 0/20px 20px,
+      linear-gradient(225deg, var(--bg-surface-2) 25%, transparent 25%) -10px 0/20px 20px,
+      var(--bg-surface);
+    border-bottom:1px solid var(--border);
+    color:var(--text-faint); font-family:'JetBrains Mono',monospace; font-size:.7rem;
+    text-transform:uppercase; letter-spacing:.08em;
+  }
+  .project-card .idx{
+    font-family:'JetBrains Mono',monospace; color:var(--accent); font-size:.78rem; margin-bottom:14px;
+  }
+  .project-card h3{font-size:1.12rem; font-weight:600; font-family:'Inter',sans-serif; margin-bottom:10px;}
+  .project-card p{color:var(--text-muted); font-size:.9rem; flex:1;}
+  .tag-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;}
+  .tag{
+    font-family:'JetBrains Mono',monospace; font-size:.72rem;
+    background:var(--accent-soft); color:var(--accent);
+    padding:4px 10px; border-radius:6px;
+  }
+  .project-link{margin-top:16px; font-size:.85rem; color:var(--text-muted); display:inline-flex; align-items:center; gap:6px;}
+  .project-link:hover{color:var(--accent);}
+  .link-row{display:flex; flex-wrap:wrap; gap:18px; align-items:center;}
+  .link-row .project-link{margin-top:16px;}
+  .video-link{color:var(--gold);}
+  .video-link:hover{color:var(--gold); opacity:.8;}
+  .expand-hint{
+    margin-top:16px; font-size:.78rem; color:var(--text-faint);
+    font-family:'JetBrains Mono',monospace; display:flex; align-items:center; gap:6px;
+  }
+
+  /* ---------- certifications — literal stamp cards ---------- */
+  .cert-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  @media (max-width:820px){ .cert-grid{grid-template-columns:1fr 1fr;} }
+  @media (max-width:560px){ .cert-grid{grid-template-columns:1fr;} }
+  .cert-card{
+    background:var(--bg-surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:22px;
+    display:flex; gap:14px; align-items:flex-start;
+    cursor:pointer; transition:border-color .2s, transform .15s, box-shadow .2s;
+  }
+  .cert-card:hover{border-color:var(--gold-soft); transform:translateY(-3px); box-shadow:0 10px 26px rgba(0,0,0,.3);}
+  .cert-seal{
+    flex:0 0 auto; width:42px; height:42px; border-radius:50%;
+    border:1.5px solid var(--gold); color:var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-size:.7rem; font-weight:600;
+    position:relative;
+  }
+  .cert-seal::after{content:""; position:absolute; inset:-4px; border:1px dashed var(--gold-soft); border-radius:50%;}
+  .cert-card h3{font-size:.98rem; font-weight:600; font-family:'Inter',sans-serif;}
+  .cert-card .issuer{color:var(--text-muted); font-size:.82rem; margin-top:4px;}
+  .cert-card .status{
+    display:inline-block; margin-top:8px; font-family:'JetBrains Mono',monospace;
+    font-size:.68rem; text-transform:uppercase; letter-spacing:.06em;
+    padding:2px 8px; border-radius:5px;
+  }
+  .status.done{background:var(--accent-soft); color:var(--accent);}
+  .status.progress{background:var(--gold-soft); color:var(--gold);}
+
+  /* ---------- modal (shared by projects + certifications) ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(4,8,7,.78);
+    backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px; z-index:100;
+    opacity:0; pointer-events:none; transition:opacity .2s ease;
+  }
+  .modal-overlay.open{opacity:1; pointer-events:auto;}
+  .modal-box{
+    background:var(--bg-surface); border:1px solid var(--border);
+    border-radius:18px; max-width:640px; width:100%;
+    max-height:86vh; overflow-y:auto;
+    transform:translateY(14px) scale(.98); transition:transform .22s ease;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+  }
+  .modal-overlay.open .modal-box{transform:translateY(0) scale(1);}
+  .modal-media{
+    width:100%; max-height:60vh; object-fit:contain;
+    border-bottom:1px solid var(--border); background:var(--bg-surface-2);
+    display:block; padding:12px 0;
+  }
+  .cert-media{
+    width:100%; max-height:60vh; object-fit:contain;
+    border-bottom:1px solid var(--border); background:var(--bg-surface-2);
+    display:block; padding:12px 0;
+  }
+  .modal-media-placeholder{
+    width:100%; aspect-ratio:16/10; display:flex; align-items:center; justify-content:center;
+    background:var(--bg-surface-2); border-bottom:1px solid var(--border);
+    color:var(--text-faint); font-family:'JetBrains Mono',monospace; font-size:.72rem;
+    text-transform:uppercase; letter-spacing:.08em;
+  }
+
+  /* ---------- project image gallery (modal) ---------- */
+  .modal-gallery{
+    position:relative; width:100%; height:60vh; overflow:hidden;
+    background:var(--bg-surface-2); border-bottom:1px solid var(--border);
+  }
+  .modal-gallery-track{
+    display:flex; height:100%; transition:transform .3s ease;
+  }
+  .modal-gallery-track img{
+    width:100%; height:100%; object-fit:contain; flex:0 0 100%;
+  }
+  .gallery-arrow{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:38px; height:38px; border-radius:50%;
+    background:rgba(4,8,7,.6); border:1px solid var(--border);
+    color:var(--text); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:1.1rem; line-height:1; z-index:2;
+    transition:border-color .2s, background .2s;
+  }
+  .gallery-arrow:hover{border-color:var(--accent-line); background:rgba(4,8,7,.85); color:var(--accent);}
+  .gallery-arrow.prev{left:14px;}
+  .gallery-arrow.next{right:14px;}
+  .gallery-dots{
+    position:absolute; bottom:14px; left:50%; transform:translateX(-50%);
+    display:flex; gap:8px; z-index:2;
+  }
+  .gallery-dot{
+    width:7px; height:7px; border-radius:50%;
+    background:rgba(255,255,255,.35); cursor:pointer;
+    transition:background .2s, transform .2s;
+  }
+  .gallery-dot.active{background:var(--accent); transform:scale(1.2);}
+  .gallery-counter{
+    position:absolute; top:14px; right:14px; z-index:2;
+    background:rgba(4,8,7,.6); border:1px solid var(--border);
+    color:var(--text-muted); font-family:'JetBrains Mono',monospace; font-size:.72rem;
+    padding:4px 10px; border-radius:999px;
+  }
+  .modal-body{padding:30px 32px 34px; position:relative;}
+  .modal-close{
+    position:absolute; top:16px; right:16px;
+    width:34px; height:34px; border-radius:50%;
+    background:rgba(0,0,0,.35); border:1px solid var(--border);
+    color:var(--text); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:1rem; line-height:1;
+    transition:border-color .2s, color .2s;
+  }
+  .modal-close:hover{border-color:var(--accent-line); color:var(--accent);}
+  .modal-body h3{font-size:1.4rem; font-weight:600; font-family:'Inter',sans-serif; padding-right:40px;}
+  .modal-body .idx{font-family:'JetBrains Mono',monospace; color:var(--accent); font-size:.78rem; margin-bottom:12px;}
+  .modal-body p{color:var(--text-muted); margin-top:14px; font-size:.96rem;}
+  .modal-body .tag-row{margin-top:20px;}
+  .modal-body .link-row{margin-top:22px;}
+
+  .cert-modal-head{display:flex; gap:18px; align-items:center;}
+  .cert-modal-seal{
+    flex:0 0 auto; width:64px; height:64px; border-radius:50%;
+    border:2px solid var(--gold); color:var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-size:.9rem; font-weight:600;
+    position:relative;
+  }
+  .cert-modal-seal::after{content:""; position:absolute; inset:-6px; border:1px dashed var(--gold-soft); border-radius:50%;}
+  .cert-modal-note{
+    margin-top:22px; padding:16px 18px; border-radius:10px;
+    background:var(--bg-surface-2); border:1px solid var(--border);
+    color:var(--text-muted); font-size:.88rem; font-family:'JetBrains Mono',monospace;
+    line-height:1.7;
+  }
+
+  /* ---------- contact ---------- */
+  .contact-box{
+    background:var(--bg-surface); border:1px solid var(--border);
+    border-radius:20px; padding:56px; text-align:center;
+    position:relative; overflow:hidden;
+  }
+  .contact-box::before{
+    content:""; position:absolute; width:340px; height:340px;
+    background:radial-gradient(circle, var(--accent-soft), transparent 70%);
+    top:-120px; right:-120px;
+  }
+  .contact-box h2{font-size:clamp(1.8rem,4vw,2.6rem); position:relative;}
+  .contact-box p{color:var(--text-muted); margin-top:14px; position:relative;}
+  .contact-methods{
+    display:flex; justify-content:center; gap:14px; margin-top:32px; flex-wrap:wrap; position:relative;
+  }
+  .contact-method{
+    border:1px solid var(--border); border-radius:10px; padding:12px 20px;
+    font-size:.88rem; display:flex; align-items:center; gap:8px;
+    transition:border-color .2s;
+  }
+  .contact-method:hover{border-color:var(--accent-line); color:var(--accent);}
+
+  footer{
+    text-align:center; padding:40px 24px; color:var(--text-faint);
+    font-size:.82rem; border-top:1px solid var(--border);
+  }
+  footer a{color:var(--text-muted);}
+  footer a:hover{color:var(--accent);}
+
+  .reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .reveal{opacity:1; transform:none; transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">Sherif<span>.</span>Hegab</div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#certifications">Certifications</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="stamp"><span class="dot"></span> Available for work</span>
+        <h1 id="hero-name">Sherif Mohamed Hegab</h1>
+        <p class="role" id="hero-role">Accountant, stamping his way into Data Analytics</p>
+        <p class="lead" id="hero-lead">
+          Accountant transitioning to Data Analytics with a background at MT Architects.
+          Skilled in Excel, SQL, Python, Power BI. Building dashboards and turning
+          financial data into actionable insights.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#contact">Get in touch</a>
+          <a class="btn btn-ghost" href="#projects">See the work</a>
+        </div>
+      </div>
+      <div class="portrait-wrap">
+       <div class="portrait" id="portrait"><img src="images/IMG-20260710-WA0015.jpg" alt="Sherif Mohamed Hegab"></div>
+      </div>
+    </div>
+
+    <div class="kpi-strip reveal" id="kpi-strip"></div>
+  </div>
+</header>
+
+<!-- ============================================================
+     ABOUT
+============================================================ -->
+<section id="about">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">Who I am</div>
+      <h2>About</h2>
+    </div>
+    <p class="about-text reveal" id="about-text"></p>
+  </div>
+</section>
+
+<!-- ============================================================
+     EXPERIENCE + EDUCATION
+============================================================ -->
+<section id="experience">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">My journey</div>
+      <h2>Qualification</h2>
+    </div>
+    <div class="cols-2">
+      <div class="reveal">
+        <div class="subhead">Experience</div>
+        <div id="experience-list"></div>
+      </div>
+      <div class="reveal">
+        <div class="subhead">Education</div>
+        <div id="education-list"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SKILLS
+============================================================ -->
+<section id="skills">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">What I work with</div>
+      <h2>Skills</h2>
+    </div>
+    <div class="skills-grid reveal" id="skills-grid"></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PROJECTS
+============================================================ -->
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">My work</div>
+      <h2>Projects</h2>
+    </div>
+    <div class="filter-row reveal" id="filter-row"></div>
+    <div class="projects-grid reveal" id="projects-grid"></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CERTIFICATIONS
+============================================================ -->
+<section id="certifications">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">Credentials</div>
+      <h2>Certifications</h2>
+    </div>
+    <div class="cert-grid reveal" id="cert-grid"></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CONTACT
+============================================================ -->
+<section id="contact">
+  <div class="wrap">
+    <div class="contact-box reveal">
+      <h2>Let's talk data</h2>
+      <p>Open to new opportunities in Data Analytics. Reach out any way that suits you.</p>
+      <div class="contact-methods" id="contact-methods"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div id="footer-text"></div>
+</footer>
+
+<!-- ============================================================
+     MODAL — reused for both project details and certificate detail
+============================================================ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box" id="modal-box"></div>
+</div>
+
+<script>
+/* ================================================================
+   ALL EDITABLE CONTENT LIVES HERE.
+   Change names, add projects, add certifications — just edit these
+   arrays/objects. The page rebuilds itself from this data.
+   ================================================================ */
+const content = {
+  name: "Sherif Mohamed Hegab",
+  role: "Accountant, stamping his way into Data Analytics",
+  location: "Cairo, Egypt",
+  email: "Hegabshiref4@gmail.com",
+  phone: "+201092616579",
+  linkedin: "https://www.linkedin.com/in/shiref-hegab-05a022232",
+  github: "https://github.com/hegabshiref4-bit",
+
+  about: `With a solid background in financial operations and reporting, I am moving into
+  <strong>data analytics</strong>. I use Advanced Excel, SQL, and Power BI to build interactive
+  dashboards, automate financial processes, and support data-driven decisions — while staying
+  devoted to the accuracy and discipline I built as an accountant.`,
+
+  // KPI strip on the hero — quick, scannable numbers
+  kpis: [
+    { num: "3+", label: "Years in Finance" },
+    { num: "4", label: "Projects Shipped" },
+    { num: "1,020", label: "Employees Analyzed" },
+    { num: "$770K", label: "Revenue Tracked" },
+  ],
+
+  experience: [
+    {
+      role: "Receivable Accountant and Treasurer",
+      org: "MT Architects Firm, Cairo, Egypt",
+      period: "Nov 2023 — Apr 2026",
+      bullets: [
+        "Managed 100+ monthly client payment transactions, including recording transactions, reconciling accounts, and depositing funds into company bank accounts.",
+        "Processed 50+ monthly credit card payments and electronic fund transfers, ensuring accurate and timely processing.",
+        "Maintained 100% up-to-date financial records for invoices, payments, and accounts receivable correspondence, reducing discrepancies and improving record accessibility.",
+        "Supervised daily treasury operations involving cash receipts and disbursements, ensuring secure handling and accurate tracking of company funds.",
+        "Prepared daily and monthly treasury reports covering 100+ financial transactions, providing management with accurate visibility into cash movements and client collections.",
+        "Collaborated with the accounting team to ensure 100% compliance with internal financial policies and accounting standards across receivables and treasury activities.",
+      ],
+    },
+    // 👉 To add another job, copy the block above and edit it.
+  ],
+
+  education: [
+    {
+      role: "Bachelor of Commerce (English Section)",
+      org: "Banha University, Egypt · Accounting",
+      period: "Jul 2020 — Jun 2023",
+    },
+  ],
+
+  skills: [
+    "Advanced Excel", "Power Query", "Pivot Tables", "XLOOKUP",
+    "Data Cleaning", "Conditional Formatting", "Odoo ERP Software",
+    "Microsoft Office Suite", "SQL", "Python", "Tableau", "Looker",
+  ],
+
+  // 👉 To add a project: copy one block below, edit the fields, add a comma.
+  //    "image" is the file name of a screenshot you upload directly into the
+  //    root of this repo, next to index.html (e.g. "hr-dashboard.png").
+  //    Leave it as "" (empty quotes) if you don't have an image yet —
+  //    a placeholder shows instead.
+  //    "video" is an optional Loom (or any video) link — leave "" to hide the button.
+  projects: [
+    {
+      title: "Automated AI LinkedIn Content Creation (n8n)",
+      description: "An automated workflow using n8n that generates and publishes LinkedIn content with AI, cutting manual content work.",
+      details: `Developed an end-to-end AI-powered workflow using n8n to automate LinkedIn content
+        creation and publishing. The system retrieves content ideas from Google Sheets, performs
+        web research using Tavily AI, generates SEO-optimized posts with OpenAI, stores the
+        generated content back in Google Sheets, and automatically publishes it to LinkedIn.
+        This workflow eliminates manual effort, ensures consistent content delivery, and
+        streamlines the entire content creation process.`,
+      tags: ["n8n", "AI", "Automation"],
+      link: "#",
+      image: "images/linkedin-automation-v2.png",
+      images: ["images/linkedin-automation-01.jpg", "images/linkedin-automation-02.png", "images/linkedin-automation-03.png"],
+      video: "https://www.loom.com/share/967cdd17e13a4a529dec81d67934209b",
+    },
+    {
+      title: "Employee Performance & Workforce Analytics",
+      description: "A Power BI dashboard analyzing 1,020 employees across 6 departments and 6 regions — salary, bonus, and headcount trends.",
+      details: `<p>Professional and interactive dashboard designed to analyze Human Resources (HR)
+          performance, providing data-driven strategic insights for informed decision-making.</p>
+        <p><strong>The dashboard includes:</strong></p>
+        <ul style="padding-left:20px; line-height:1.8;">
+          <li><strong>Key Performance Indicators (KPIs):</strong> A quick overview of total salaries
+            and bonuses, employee count, and the distribution of departments and regions.</li>
+          <li><strong>Salary &amp; Bonus Analysis:</strong> Monthly trend analysis and comparison of
+            payroll and bonus expenses across different departments.</li>
+          <li><strong>Workforce Distribution:</strong> Geographic analysis of employees and breakdown
+            of work arrangements (Remote vs. Office).</li>
+          <li><strong>Hiring Trends:</strong> Tracking recruitment growth over the years to support
+            workforce planning and future hiring strategies.</li>
+        </ul>
+        <p><strong>Tools Used:</strong> Microsoft Excel, Power BI, Dashboard Design.</p>
+        <p>This dashboard enables decision-makers to better understand workforce trends, optimize
+          payroll spending, improve resource allocation, and support more effective human resource
+          management.</p>`,
+      tags: ["Power BI", "HR Analytics", "Dashboard"],
+      link: "#",
+      image: "images/hr-dashboard.png",
+      video: "",
+    },
+    {
+      title: "Interactive Sales Analysis Dashboard",
+      description: "An end-to-end Power BI dashboard tracking $770.64K in revenue, 117K units, and 254 products across regions and payment types.",
+      details: `<p>A comprehensive, interactive dashboard designed to monitor, track, and analyze
+          overall sales performance across multiple key dimensions, empowering management to make
+          data-driven decisions.</p>
+        <p><strong>Key Features &amp; KPIs Included:</strong></p>
+        <ul style="padding-left:20px; line-height:1.8;">
+          <li><strong>Key Performance Indicators (KPIs):</strong> Instant display of Total Revenue,
+            Total Quantity sold, Count of Products, and Total Orders.</li>
+          <li><strong>Geographical Analysis:</strong> Distribution and comparison of sales across
+            various cities (e.g., Lisbon, London, Madrid, Berlin, and Paris).</li>
+          <li><strong>Product &amp; Payment Breakdown:</strong> Identification of top-performing
+            products alongside the percentage distribution of payment methods (Credit Card, Cash,
+            and Gift Card).</li>
+          <li><strong>Sales by Manager:</strong> Tracking individual sales manager contributions and
+            performance to evaluate efficiency.</li>
+          <li><strong>Sales Trend:</strong> Monthly tracking of sales volume progression and growth
+            over the year.</li>
+          <li><strong>Dynamic Interactivity:</strong> Advanced Slicers enabling users to instantly
+            filter data by city, product, or payment method, automatically updating all charts in
+            real-time.</li>
+        </ul>`,
+      tags: ["Power BI", "Power Query", "Data Cleaning"],
+      link: "#",
+      image: "images/sales-dashboard-v2.png",
+      images: ["images/sales-dashboard-01.png", "images/sales-dashboard-02.png", "images/sales-dashboard-03.png", "images/sales-dashboard-04.png", "images/sales-dashboard-05.png"],
+      video: "https://www.loom.com/share/573f6c5fffc84a50b1cafc1251825a80",
+    },
+    {
+      title: "Automated Data Cleaning & Dashboard Pipeline (n8n)",
+      description: "An n8n workflow that ingests a raw, dirty dataset from Google Sheets, profiles it, lets AI plan the cleaning steps, applies the cleaning automatically, exports it to Excel, and builds a dashboard from the result.",
+      details: `<p>An end-to-end automation workflow built in n8n that eliminates manual data
+          wrangling by using LLM intelligence to diagnose, clean, and transform messy raw datasets
+          into analysis-ready formats and automated dashboard reports.</p>
+        <p><strong>Key Workflow Stages</strong></p>
+        <ul style="padding-left:20px; line-height:1.8;">
+          <li><strong>Data Ingestion:</strong> Automatically reads raw, unformatted datasets directly
+            from Google Sheets to initiate the pipeline.</li>
+          <li><strong>AI-Driven Profiling &amp; Planning:</strong> Profiles the dataset's structural
+            characteristics and passes them to an LLM node (AI Cleaning Plan) to intelligently
+            detect anomalies, missing values, and formatting inconsistencies, generating a dynamic
+            cleaning recipe.</li>
+          <li><strong>Data Transformation:</strong> Executes the prescribed transformations through
+            the Apply Cleaning node to standardize and sanitize the records.</li>
+          <li><strong>Dual-Branch Output:</strong> Splits the processed data stream into two parallel
+            actions: converting the purified dataset into a structured XLSX workbook (Cleaned Data
+            to Excel) and triggering automated reporting logic (Build Dashboard).</li>
+        </ul>
+        <p><strong>Tech Stack &amp; Integrations</strong></p>
+        <ul style="padding-left:20px; line-height:1.8;">
+          <li><strong>Workflow Automation:</strong> n8n</li>
+          <li><strong>Data Source &amp; Destination:</strong> Google Sheets, Excel (XLSX conversion)</li>
+          <li><strong>Intelligence:</strong> LLM API integration for automated data profiling and
+            cleaning strategy generation</li>
+        </ul>`,
+      tags: ["n8n", "AI", "Data Cleaning", "Automation"],
+      link: "#",
+      image: "images/data-cleaning-pipeline-v2.png",
+      images: ["images/data-cleaning-01.png", "images/data-cleaning-02.png", "images/data-cleaning-03.png", "images/data-cleaning-04.png", "images/data-cleaning-05.png"],
+      video: "https://drive.google.com/file/d/1MAyftrtj6Vn8damFx11GMyKhCBdbTJd5/view?usp=sharing",
+    },
+    // {
+    //   title: "New project title",
+    //   description: "One or two sentences about what it does.",
+    //   tags: ["Tag1", "Tag2"],
+    //   link: "https://github.com/hegabshiref4-bit/repo-name",
+    //   image: "new-project.png",
+    //   video: "",
+    // },
+  ],
+
+  // 👉 To add a certificate: copy one block below and edit it.
+  //    "image" is optional — the file name of a certificate photo/scan you
+  //    upload next to index.html. Leave "" if you don't have one yet.
+  certifications: [
+    { name: "Google Data Analysis", issuer: "Google", year: "2026", status: "done", image: "images/1783942982402.jpg",
+      description: "Completed the Google Data Analytics Professional Certificate — a 9-course program covering data cleaning, analysis, visualization, SQL, Tableau, and Python." },
+    { name: "Python Programming Basics", issuer: "Huawei ICT Academy", year: "2026", status: "done", image: "images/1787664304071.jpg",
+      description: "Completed Huawei ICT Academy's Python Programming Basics course, covering core programming concepts, data types, control structures, and problem-solving fundamentals in Python." },
+    { name: "Data Analysis Scholarship Program", issuer: "Digilans Initiative", year: "In progress", status: "progress", image: "",
+      description: "Participating in an intensive data analysis program covering advanced Excel (Power Query, Dashboards), data visualization, and AI tools. Applying analytical skills to real-world datasets and automation tasks." },
+    { name: "Odoo Business", issuer: "Intelligence Academy", year: "In progress", status: "progress", image: "",
+      description: "Studying Odoo ERP software functionality for business process management, reporting, and data analytics." },
+    { name: "DipIFRS", issuer: "IFRS Standards", year: "In progress", status: "progress", image: "",
+      description: "Building a comprehensive understanding of International Financial Reporting Standards (IFRS) and global accounting practices." },
+    { name: "Accounting Workshop", issuer: "EYOUTH", year: "2023", status: "done", image: "images/1781107619263.jpg",
+      description: "Mastered accounting software and financial statement analysis." },
+    // { name: "New certificate", issuer: "Issuer", year: "2026", status: "done", image: "", description: "" },
+  ],
+};
+
+/* ================================================================
+   RENDERING — you shouldn't need to touch anything below this line.
+   ================================================================ */
+document.getElementById('hero-name').textContent = content.name;
+document.getElementById('hero-role').textContent = content.role;
+document.getElementById('about-text').innerHTML = content.about;
+document.getElementById('footer-text').innerHTML =
+  `© ${new Date().getFullYear()} ${content.name} · Built with care ·
+   <a href="${content.github}">GitHub</a>`;
+
+document.getElementById('kpi-strip').innerHTML = content.kpis.map(k => `
+  <div class="kpi">
+    <div class="num">${k.num}</div>
+    <div class="label">${k.label}</div>
+  </div>
+`).join('');
+
+document.getElementById('experience-list').innerHTML = content.experience.map((e, i) => `
+  <div class="timeline-item" data-kind="experience" data-index="${i}">
+    <h3>${escapeHtml(e.role)}</h3>
+    <div class="expand-hint">⤢ Click for details</div>
+  </div>
+`).join('');
+
+document.getElementById('education-list').innerHTML = content.education.map((e, i) => `
+  <div class="timeline-item" data-kind="education" data-index="${i}">
+    <h3>${escapeHtml(e.role)}</h3>
+    <div class="expand-hint">⤢ Click for details</div>
+  </div>
+`).join('');
+
+document.querySelectorAll('#experience-list .timeline-item, #education-list .timeline-item').forEach(item => {
+  item.addEventListener('click', () => openTimelineModal(item.dataset.kind, Number(item.dataset.index)));
+});
+
+function openTimelineModal(kind, i){
+  const e = kind === 'experience' ? content.experience[i] : content.education[i];
+  const bulletsHtml = e.bullets && e.bullets.length
+    ? `<ul style="margin-top:20px; padding-left:20px; color:var(--text-muted); font-size:.94rem; line-height:1.8;">
+        ${e.bullets.map(b => `<li style="margin-bottom:8px;">${escapeHtml(b)}</li>`).join('')}
+       </ul>`
+    : '';
+  document.getElementById('modal-box').innerHTML = `
+    <div class="modal-body">
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      <h3>${escapeHtml(e.role)}</h3>
+      <div class="org" style="margin-top:8px;">${escapeHtml(e.org)}</div>
+      <div class="period" style="margin-top:6px;">${escapeHtml(e.period)}</div>
+      ${bulletsHtml}
+    </div>
+  `;
+  openModal();
+}
+
+document.getElementById('skills-grid').innerHTML = content.skills.map(s => `
+  <div class="skill-pill"><span class="chk">✓</span> ${s}</div>
+`).join('');
+
+/* ---------- projects: filter row + grid + modal ---------- */
+const allTags = ["All", ...Array.from(new Set(content.projects.flatMap(p => p.tags)))];
+let activeTag = "All";
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[m]));
+}
+
+document.getElementById('filter-row').innerHTML = allTags.map(t => `
+  <button class="filter-btn ${t === 'All' ? 'active' : ''}" data-tag="${escapeHtml(t)}">${t}</button>
+`).join('');
+
+function renderProjects(){
+  document.getElementById('projects-grid').innerHTML = content.projects.map((p, i) => `
+    <div class="project-card ${activeTag !== 'All' && !p.tags.includes(activeTag) ? 'hidden' : ''}" data-index="${i}">
+      ${p.image
+        ? `<img class="project-thumb" src="${p.image}" alt="${escapeHtml(p.title)}" data-fallback="1">`
+        : `<div class="project-thumb-placeholder">No image yet</div>`
+      }
+      <div class="card-body">
+        <div class="idx">${String(i + 1).padStart(2, '0')}</div>
+        <h3>${escapeHtml(p.title)}</h3>
+        <p>${escapeHtml(p.description)}</p>
+        <div class="tag-row">${p.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>
+        <div class="expand-hint">⤢ Click for details</div>
+      </div>
+    </div>
+  `).join('');
+
+  document.querySelectorAll('.project-thumb[data-fallback]').forEach(img => {
+    img.addEventListener('error', () => {
+      const placeholder = document.createElement('div');
+      placeholder.className = 'project-thumb-placeholder';
+      placeholder.textContent = 'No image yet';
+      img.replaceWith(placeholder);
+    });
+  });
+
+  document.querySelectorAll('.project-card').forEach(card => {
+    card.addEventListener('click', () => openProjectModal(Number(card.dataset.index)));
+  });
+}
+renderProjects();
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeTag = btn.dataset.tag;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+    renderProjects();
+  });
+});
+
+let galleryIndex = 0;
+let galleryImages = [];
+
+function openProjectModal(i){
+  const p = content.projects[i];
+  const imgs = (p.images && p.images.length) ? p.images : (p.image ? [p.image] : []);
+  galleryImages = imgs;
+  galleryIndex = 0;
+
+  const media = imgs.length
+    ? `<div class="modal-gallery" id="modal-gallery">
+        <div class="modal-gallery-track" id="gallery-track">
+          ${imgs.map(src => `<img src="${src}" alt="${escapeHtml(p.title)}">`).join('')}
+        </div>
+        ${imgs.length > 1 ? `
+          <div class="gallery-arrow prev" id="gallery-prev">‹</div>
+          <div class="gallery-arrow next" id="gallery-next">›</div>
+          <div class="gallery-counter" id="gallery-counter">1 / ${imgs.length}</div>
+          <div class="gallery-dots" id="gallery-dots">
+            ${imgs.map((_, idx) => `<div class="gallery-dot ${idx === 0 ? 'active' : ''}" data-index="${idx}"></div>`).join('')}
+          </div>
+        ` : ''}
+      </div>`
+    : `<div class="modal-media-placeholder">No image yet</div>`;
+
+  const links = `
+    ${p.link && p.link !== '#' ? `<a class="btn btn-primary" href="${p.link}" target="_blank" rel="noopener">View project →</a>` : ''}
+    ${p.video ? `<a class="btn btn-ghost" href="${p.video}" target="_blank" rel="noopener">▶ Watch demo</a>` : ''}
+  `;
+  const bodyContent = p.details ? p.details : `<p>${escapeHtml(p.description)}</p>`;
+  document.getElementById('modal-box').innerHTML = `
+    ${media}
+    <div class="modal-body">
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      <div class="idx">${String(i + 1).padStart(2, '0')} / ${String(content.projects.length).padStart(2, '0')}</div>
+      <h3>${escapeHtml(p.title)}</h3>
+      <div style="color:var(--text-muted); font-size:.96rem; margin-top:14px;">${bodyContent}</div>
+      <div class="tag-row">${p.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>
+      <div class="link-row">${links}</div>
+    </div>
+  `;
+
+  if (imgs.length > 1) {
+    document.getElementById('gallery-prev').addEventListener('click', () => moveGallery(-1));
+    document.getElementById('gallery-next').addEventListener('click', () => moveGallery(1));
+    document.querySelectorAll('.gallery-dot').forEach(dot => {
+      dot.addEventListener('click', () => { galleryIndex = Number(dot.dataset.index); updateGallery(); });
+    });
+  }
+
+  const galleryImgs = document.querySelectorAll('.modal-gallery-track img');
+  galleryImgs.forEach(img => img.addEventListener('error', () => {
+    const gallery = document.getElementById('modal-gallery');
+    if (gallery) {
+      gallery.outerHTML = '<div class="modal-media-placeholder">No image yet</div>';
+    }
+  }));
+
+  openModal();
+}
+
+function moveGallery(dir){
+  galleryIndex = (galleryIndex + dir + galleryImages.length) % galleryImages.length;
+  updateGallery();
+}
+
+function updateGallery(){
+  const track = document.getElementById('gallery-track');
+  const counter = document.getElementById('gallery-counter');
+  if (!track) return;
+  track.style.transform = `translateX(-${galleryIndex * 100}%)`;
+  if (counter) counter.textContent = `${galleryIndex + 1} / ${galleryImages.length}`;
+  document.querySelectorAll('.gallery-dot').forEach((dot, idx) => {
+    dot.classList.toggle('active', idx === galleryIndex);
+  });
+}
+
+/* ---------- certifications: grid + modal ---------- */
+document.getElementById('cert-grid').innerHTML = content.certifications.map((c, i) => `
+  <div class="cert-card" data-index="${i}">
+    <div class="cert-seal">${c.year.toString().slice(-2)}</div>
+    <div>
+      <h3>${escapeHtml(c.name)}</h3>
+      <div class="issuer">${escapeHtml(c.issuer)}</div>
+      <span class="status ${c.status}">${c.status === 'done' ? 'Completed' : 'In progress'}</span>
+    </div>
+  </div>
+`).join('');
+
+document.querySelectorAll('.cert-card').forEach(card => {
+  card.addEventListener('click', () => openCertModal(Number(card.dataset.index)));
+});
+
+function openCertModal(i){
+  const c = content.certifications[i];
+  const media = c.image
+    ? `<img class="cert-media" src="${c.image}" alt="${escapeHtml(c.name)}" data-fallback="1">`
+    : '';
+  const descriptionHtml = c.description
+    ? `<p style="color:var(--text-muted); font-size:.94rem; margin-top:16px; line-height:1.7;">${escapeHtml(c.description)}</p>`
+    : '';
+  document.getElementById('modal-box').innerHTML = `
+    ${media}
+    <div class="modal-body">
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      <div class="cert-modal-head">
+        <div class="cert-modal-seal">${c.year.toString().slice(-2)}</div>
+        <div>
+          <h3 style="padding-right:0;">${escapeHtml(c.name)}</h3>
+          <div class="issuer" style="margin-top:6px;">${escapeHtml(c.issuer)}</div>
+        </div>
+      </div>
+      <span class="status ${c.status}" style="margin-top:20px;">${c.status === 'done' ? 'Completed' : 'In progress'}</span>
+      ${descriptionHtml}
+      <div class="cert-modal-note">
+        Issuer&nbsp;&nbsp;: ${escapeHtml(c.issuer)}<br>
+        Year&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ${escapeHtml(c.year)}<br>
+        Status&nbsp;&nbsp;: ${c.status === 'done' ? 'Completed' : 'In progress'}
+      </div>
+    </div>
+  `;
+  const mediaImg = document.querySelector('.cert-media[data-fallback]');
+  if (mediaImg) mediaImg.addEventListener('error', () => mediaImg.remove());
+  openModal();
+}
+
+/* ---------- shared modal open/close ---------- */
+const overlay = document.getElementById('modal-overlay');
+function openModal(){
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+}
+function closeModal(){
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+  if (galleryImages.length > 1 && overlay.classList.contains('open')) {
+    if (e.key === 'ArrowRight') moveGallery(1);
+    if (e.key === 'ArrowLeft') moveGallery(-1);
+  }
+});
+
+document.getElementById('contact-methods').innerHTML = `
+  <a class="contact-method" href="mailto:${content.email}">✉ ${content.email}</a>
+  <a class="contact-method" href="tel:${content.phone}">☎ ${content.phone}</a>
+  <a class="contact-method" href="${content.linkedin}" target="_blank">in LinkedIn</a>
+  <a class="contact-method" href="${content.github}" target="_blank">⌥ GitHub</a>
+`;
+
+/* Scroll-reveal */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
