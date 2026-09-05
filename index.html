@@ -780,13 +780,19 @@ const content = {
   //    "image" is optional — the file name of a certificate photo/scan you
   //    upload next to index.html. Leave "" if you don't have one yet.
   certifications: [
-    { name: "Google Data Analysis", issuer: "Google", year: "2026", status: "done", image: "" },
-    { name: "Python Programming Basics", issuer: "Huawei ICT Academy", year: "2026", status: "done", image: "" },
-    { name: "Data Analysis Scholarship Program", issuer: "Digilans Initiative", year: "In progress", status: "progress", image: "" },
-    { name: "Odoo Business", issuer: "Intelligence Academy", year: "In progress", status: "progress", image: "" },
-    { name: "DipIFRS", issuer: "IFRS Standards", year: "In progress", status: "progress", image: "" },
-    { name: "Accounting Workshop", issuer: "EYOUTH", year: "2023", status: "done", image: "" },
-    // { name: "New certificate", issuer: "Issuer", year: "2026", status: "done", image: "" },
+    { name: "Google Data Analysis", issuer: "Google", year: "2026", status: "done", image: "images/cert-google-data-analytics.jpg",
+      description: "Completed the Google Data Analytics Professional Certificate — a 9-course program covering data cleaning, analysis, visualization, SQL, Tableau, and Python." },
+    { name: "Python Programming Basics", issuer: "Huawei ICT Academy", year: "2026", status: "done", image: "images/cert-python-basics.jpg",
+      description: "Completed Huawei ICT Academy's Python Programming Basics course, covering core programming concepts, data types, control structures, and problem-solving fundamentals in Python." },
+    { name: "Data Analysis Scholarship Program", issuer: "Digilans Initiative", year: "In progress", status: "progress", image: "",
+      description: "Participating in an intensive data analysis program covering advanced Excel (Power Query, Dashboards), data visualization, and AI tools. Applying analytical skills to real-world datasets and automation tasks." },
+    { name: "Odoo Business", issuer: "Intelligence Academy", year: "In progress", status: "progress", image: "",
+      description: "Studying Odoo ERP software functionality for business process management, reporting, and data analytics." },
+    { name: "DipIFRS", issuer: "IFRS Standards", year: "In progress", status: "progress", image: "",
+      description: "Building a comprehensive understanding of International Financial Reporting Standards (IFRS) and global accounting practices." },
+    { name: "Accounting Workshop", issuer: "EYOUTH", year: "2023", status: "done", image: "images/cert-accounting-workshop.jpg",
+      description: "Mastered accounting software and financial statement analysis." },
+    // { name: "New certificate", issuer: "Issuer", year: "2026", status: "done", image: "", description: "" },
   ],
 };
 
@@ -1000,6 +1006,9 @@ function openCertModal(i){
   const media = c.image
     ? `<img class="modal-media" src="${c.image}" alt="${escapeHtml(c.name)}" data-fallback="1">`
     : '';
+  const descriptionHtml = c.description
+    ? `<p style="color:var(--text-muted); font-size:.94rem; margin-top:16px; line-height:1.7;">${escapeHtml(c.description)}</p>`
+    : '';
   document.getElementById('modal-box').innerHTML = `
     ${media}
     <div class="modal-body">
@@ -1012,6 +1021,7 @@ function openCertModal(i){
         </div>
       </div>
       <span class="status ${c.status}" style="margin-top:20px;">${c.status === 'done' ? 'Completed' : 'In progress'}</span>
+      ${descriptionHtml}
       <div class="cert-modal-note">
         Issuer&nbsp;&nbsp;: ${escapeHtml(c.issuer)}<br>
         Year&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ${escapeHtml(c.year)}<br>
