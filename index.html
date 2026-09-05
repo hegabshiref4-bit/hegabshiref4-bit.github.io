@@ -194,8 +194,10 @@
   @media (max-width:820px){ .cols-2{grid-template-columns:1fr;} }
   .timeline-item{
     position:relative; padding-left:26px; border-left:1px solid var(--border);
-    padding-bottom:32px;
+    padding-bottom:32px; cursor:pointer; transition:transform .15s ease;
   }
+  .timeline-item:hover{transform:translateX(4px);}
+  .timeline-item:hover h3{color:var(--accent);}
   .timeline-item:last-child{padding-bottom:0;}
   .timeline-item::before{
     content:""; position:absolute; left:-6px; top:2px;
@@ -591,9 +593,12 @@ const content = {
       org: "MT Architects Firm, Cairo, Egypt",
       period: "Nov 2023 — Apr 2026",
       bullets: [
-        "Managed client payment processing, reconciliation, and treasury operations end to end.",
-        "Prepared daily and monthly financial reports for senior management review.",
-        "Maintained accurate records to support audits and financial reviews.",
+        "Managed 100+ monthly client payment transactions, including recording transactions, reconciling accounts, and depositing funds into company bank accounts.",
+        "Processed 50+ monthly credit card payments and electronic fund transfers, ensuring accurate and timely processing.",
+        "Maintained 100% up-to-date financial records for invoices, payments, and accounts receivable correspondence, reducing discrepancies and improving record accessibility.",
+        "Supervised daily treasury operations involving cash receipts and disbursements, ensuring secure handling and accurate tracking of company funds.",
+        "Prepared daily and monthly treasury reports covering 100+ financial transactions, providing management with accurate visibility into cash movements and client collections.",
+        "Collaborated with the accounting team to ensure 100% compliance with internal financial policies and accounting standards across receivables and treasury activities.",
       ],
     },
     // 👉 To add another job, copy the block above and edit it.
@@ -693,22 +698,42 @@ document.getElementById('kpi-strip').innerHTML = content.kpis.map(k => `
   </div>
 `).join('');
 
-document.getElementById('experience-list').innerHTML = content.experience.map(e => `
-  <div class="timeline-item">
-    <h3>${e.role}</h3>
-    <div class="org">${e.org}</div>
-    <div class="period">${e.period}</div>
-    <ul>${e.bullets.map(b => `<li>${b}</li>`).join('')}</ul>
+document.getElementById('experience-list').innerHTML = content.experience.map((e, i) => `
+  <div class="timeline-item" data-kind="experience" data-index="${i}">
+    <h3>${escapeHtml(e.role)}</h3>
+    <div class="expand-hint">⤢ Click for details</div>
   </div>
 `).join('');
 
-document.getElementById('education-list').innerHTML = content.education.map(e => `
-  <div class="timeline-item">
-    <h3>${e.role}</h3>
-    <div class="org">${e.org}</div>
-    <div class="period">${e.period}</div>
+document.getElementById('education-list').innerHTML = content.education.map((e, i) => `
+  <div class="timeline-item" data-kind="education" data-index="${i}">
+    <h3>${escapeHtml(e.role)}</h3>
+    <div class="expand-hint">⤢ Click for details</div>
   </div>
 `).join('');
+
+document.querySelectorAll('#experience-list .timeline-item, #education-list .timeline-item').forEach(item => {
+  item.addEventListener('click', () => openTimelineModal(item.dataset.kind, Number(item.dataset.index)));
+});
+
+function openTimelineModal(kind, i){
+  const e = kind === 'experience' ? content.experience[i] : content.education[i];
+  const bulletsHtml = e.bullets && e.bullets.length
+    ? `<ul style="margin-top:20px; padding-left:20px; color:var(--text-muted); font-size:.94rem; line-height:1.8;">
+        ${e.bullets.map(b => `<li style="margin-bottom:8px;">${escapeHtml(b)}</li>`).join('')}
+       </ul>`
+    : '';
+  document.getElementById('modal-box').innerHTML = `
+    <div class="modal-body">
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      <h3>${escapeHtml(e.role)}</h3>
+      <div class="org" style="margin-top:8px;">${escapeHtml(e.org)}</div>
+      <div class="period" style="margin-top:6px;">${escapeHtml(e.period)}</div>
+      ${bulletsHtml}
+    </div>
+  `;
+  openModal();
+}
 
 document.getElementById('skills-grid').innerHTML = content.skills.map(s => `
   <div class="skill-pill"><span class="chk">✓</span> ${s}</div>
