@@ -336,8 +336,9 @@
   }
   .modal-overlay.open .modal-box{transform:translateY(0) scale(1);}
   .modal-media{
-    width:100%; aspect-ratio:16/10; object-fit:cover;
+    width:100%; max-height:60vh; object-fit:contain;
     border-bottom:1px solid var(--border); background:var(--bg-surface-2);
+    display:block; padding:12px 0;
   }
   .cert-media{
     width:100%; max-height:60vh; object-fit:contain;
@@ -353,14 +354,14 @@
 
   /* ---------- project image gallery (modal) ---------- */
   .modal-gallery{
-    position:relative; width:100%; aspect-ratio:16/10; overflow:hidden;
+    position:relative; width:100%; height:60vh; overflow:hidden;
     background:var(--bg-surface-2); border-bottom:1px solid var(--border);
   }
   .modal-gallery-track{
     display:flex; height:100%; transition:transform .3s ease;
   }
   .modal-gallery-track img{
-    width:100%; height:100%; object-fit:cover; flex:0 0 100%;
+    width:100%; height:100%; object-fit:contain; flex:0 0 100%;
   }
   .gallery-arrow{
     position:absolute; top:50%; transform:translateY(-50%);
