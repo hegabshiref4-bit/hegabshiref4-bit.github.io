@@ -345,6 +345,45 @@
     color:var(--text-faint); font-family:'JetBrains Mono',monospace; font-size:.72rem;
     text-transform:uppercase; letter-spacing:.08em;
   }
+
+  /* ---------- project image gallery (modal) ---------- */
+  .modal-gallery{
+    position:relative; width:100%; aspect-ratio:16/10; overflow:hidden;
+    background:var(--bg-surface-2); border-bottom:1px solid var(--border);
+  }
+  .modal-gallery-track{
+    display:flex; height:100%; transition:transform .3s ease;
+  }
+  .modal-gallery-track img{
+    width:100%; height:100%; object-fit:cover; flex:0 0 100%;
+  }
+  .gallery-arrow{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:38px; height:38px; border-radius:50%;
+    background:rgba(4,8,7,.6); border:1px solid var(--border);
+    color:var(--text); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:1.1rem; line-height:1; z-index:2;
+    transition:border-color .2s, background .2s;
+  }
+  .gallery-arrow:hover{border-color:var(--accent-line); background:rgba(4,8,7,.85); color:var(--accent);}
+  .gallery-arrow.prev{left:14px;}
+  .gallery-arrow.next{right:14px;}
+  .gallery-dots{
+    position:absolute; bottom:14px; left:50%; transform:translateX(-50%);
+    display:flex; gap:8px; z-index:2;
+  }
+  .gallery-dot{
+    width:7px; height:7px; border-radius:50%;
+    background:rgba(255,255,255,.35); cursor:pointer;
+    transition:background .2s, transform .2s;
+  }
+  .gallery-dot.active{background:var(--accent); transform:scale(1.2);}
+  .gallery-counter{
+    position:absolute; top:14px; right:14px; z-index:2;
+    background:rgba(4,8,7,.6); border:1px solid var(--border);
+    color:var(--text-muted); font-family:'JetBrains Mono',monospace; font-size:.72rem;
+    padding:4px 10px; border-radius:999px;
+  }
   .modal-body{padding:30px 32px 34px; position:relative;}
   .modal-close{
     position:absolute; top:16px; right:16px;
@@ -637,6 +676,7 @@ const content = {
       tags: ["n8n", "AI", "Automation"],
       link: "#",
       image: "images/linkedin-automation-v2.png",
+      images: ["images/linkedin-automation-01.jpg", "images/linkedin-automation-02.png", "images/linkedin-automation-03.png"],
       video: "https://www.loom.com/share/967cdd17e13a4a529dec81d67934209b",
     },
     {
@@ -690,6 +730,7 @@ const content = {
       tags: ["Power BI", "Power Query", "Data Cleaning"],
       link: "#",
       image: "images/sales-dashboard-v2.png",
+      images: ["images/sales-dashboard-01.png", "images/sales-dashboard-02.png", "images/sales-dashboard-03.png", "images/sales-dashboard-04.png", "images/sales-dashboard-05.png"],
       video: "https://www.loom.com/share/573f6c5fffc84a50b1cafc1251825a80",
     },
     {
@@ -722,6 +763,7 @@ const content = {
       tags: ["n8n", "AI", "Data Cleaning", "Automation"],
       link: "#",
       image: "images/data-cleaning-pipeline-v2.png",
+      images: ["images/data-cleaning-01.png", "images/data-cleaning-02.png", "images/data-cleaning-03.png", "images/data-cleaning-04.png", "images/data-cleaning-05.png"],
       video: "https://drive.google.com/file/d/1MAyftrtj6Vn8damFx11GMyKhCBdbTJd5/view?usp=sharing",
     },
     // {
@@ -860,11 +902,31 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
   });
 });
 
+let galleryIndex = 0;
+let galleryImages = [];
+
 function openProjectModal(i){
   const p = content.projects[i];
-  const media = p.image
-    ? `<img class="modal-media" src="${p.image}" alt="${escapeHtml(p.title)}" data-fallback="1">`
+  const imgs = (p.images && p.images.length) ? p.images : (p.image ? [p.image] : []);
+  galleryImages = imgs;
+  galleryIndex = 0;
+
+  const media = imgs.length
+    ? `<div class="modal-gallery" id="modal-gallery">
+        <div class="modal-gallery-track" id="gallery-track">
+          ${imgs.map(src => `<img src="${src}" alt="${escapeHtml(p.title)}">`).join('')}
+        </div>
+        ${imgs.length > 1 ? `
+          <div class="gallery-arrow prev" id="gallery-prev">‹</div>
+          <div class="gallery-arrow next" id="gallery-next">›</div>
+          <div class="gallery-counter" id="gallery-counter">1 / ${imgs.length}</div>
+          <div class="gallery-dots" id="gallery-dots">
+            ${imgs.map((_, idx) => `<div class="gallery-dot ${idx === 0 ? 'active' : ''}" data-index="${idx}"></div>`).join('')}
+          </div>
+        ` : ''}
+      </div>`
     : `<div class="modal-media-placeholder">No image yet</div>`;
+
   const links = `
     ${p.link && p.link !== '#' ? `<a class="btn btn-primary" href="${p.link}" target="_blank" rel="noopener">View project →</a>` : ''}
     ${p.video ? `<a class="btn btn-ghost" href="${p.video}" target="_blank" rel="noopener">▶ Watch demo</a>` : ''}
@@ -881,14 +943,40 @@ function openProjectModal(i){
       <div class="link-row">${links}</div>
     </div>
   `;
-  const mediaImg = document.querySelector('.modal-media[data-fallback]');
-  if (mediaImg) mediaImg.addEventListener('error', () => {
-    const placeholder = document.createElement('div');
-    placeholder.className = 'modal-media-placeholder';
-    placeholder.textContent = 'No image yet';
-    mediaImg.replaceWith(placeholder);
-  });
+
+  if (imgs.length > 1) {
+    document.getElementById('gallery-prev').addEventListener('click', () => moveGallery(-1));
+    document.getElementById('gallery-next').addEventListener('click', () => moveGallery(1));
+    document.querySelectorAll('.gallery-dot').forEach(dot => {
+      dot.addEventListener('click', () => { galleryIndex = Number(dot.dataset.index); updateGallery(); });
+    });
+  }
+
+  const galleryImgs = document.querySelectorAll('.modal-gallery-track img');
+  galleryImgs.forEach(img => img.addEventListener('error', () => {
+    const gallery = document.getElementById('modal-gallery');
+    if (gallery) {
+      gallery.outerHTML = '<div class="modal-media-placeholder">No image yet</div>';
+    }
+  }));
+
   openModal();
+}
+
+function moveGallery(dir){
+  galleryIndex = (galleryIndex + dir + galleryImages.length) % galleryImages.length;
+  updateGallery();
+}
+
+function updateGallery(){
+  const track = document.getElementById('gallery-track');
+  const counter = document.getElementById('gallery-counter');
+  if (!track) return;
+  track.style.transform = `translateX(-${galleryIndex * 100}%)`;
+  if (counter) counter.textContent = `${galleryIndex + 1} / ${galleryImages.length}`;
+  document.querySelectorAll('.gallery-dot').forEach((dot, idx) => {
+    dot.classList.toggle('active', idx === galleryIndex);
+  });
 }
 
 /* ---------- certifications: grid + modal ---------- */
@@ -948,7 +1036,13 @@ function closeModal(){
   document.body.style.overflow = '';
 }
 overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+  if (galleryImages.length > 1 && overlay.classList.contains('open')) {
+    if (e.key === 'ArrowRight') moveGallery(1);
+    if (e.key === 'ArrowLeft') moveGallery(-1);
+  }
+});
 
 document.getElementById('contact-methods').innerHTML = `
   <a class="contact-method" href="mailto:${content.email}">✉ ${content.email}</a>
