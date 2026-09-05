@@ -628,6 +628,12 @@ const content = {
     {
       title: "Automated AI LinkedIn Content Creation (n8n)",
       description: "An automated workflow using n8n that generates and publishes LinkedIn content with AI, cutting manual content work.",
+      details: `Developed an end-to-end AI-powered workflow using n8n to automate LinkedIn content
+        creation and publishing. The system retrieves content ideas from Google Sheets, performs
+        web research using Tavily AI, generates SEO-optimized posts with OpenAI, stores the
+        generated content back in Google Sheets, and automatically publishes it to LinkedIn.
+        This workflow eliminates manual effort, ensures consistent content delivery, and
+        streamlines the entire content creation process.`,
       tags: ["n8n", "AI", "Automation"],
       link: "#",
       image: "images/linkedin-automation-v2.png",
@@ -636,6 +642,23 @@ const content = {
     {
       title: "Employee Performance & Workforce Analytics",
       description: "A Power BI dashboard analyzing 1,020 employees across 6 departments and 6 regions — salary, bonus, and headcount trends.",
+      details: `<p>Professional and interactive dashboard designed to analyze Human Resources (HR)
+          performance, providing data-driven strategic insights for informed decision-making.</p>
+        <p><strong>The dashboard includes:</strong></p>
+        <ul style="padding-left:20px; line-height:1.8;">
+          <li><strong>Key Performance Indicators (KPIs):</strong> A quick overview of total salaries
+            and bonuses, employee count, and the distribution of departments and regions.</li>
+          <li><strong>Salary &amp; Bonus Analysis:</strong> Monthly trend analysis and comparison of
+            payroll and bonus expenses across different departments.</li>
+          <li><strong>Workforce Distribution:</strong> Geographic analysis of employees and breakdown
+            of work arrangements (Remote vs. Office).</li>
+          <li><strong>Hiring Trends:</strong> Tracking recruitment growth over the years to support
+            workforce planning and future hiring strategies.</li>
+        </ul>
+        <p><strong>Tools Used:</strong> Microsoft Excel, Power BI, Dashboard Design.</p>
+        <p>This dashboard enables decision-makers to better understand workforce trends, optimize
+          payroll spending, improve resource allocation, and support more effective human resource
+          management.</p>`,
       tags: ["Power BI", "HR Analytics", "Dashboard"],
       link: "#",
       image: "images/hr-dashboard.png",
@@ -644,6 +667,26 @@ const content = {
     {
       title: "Interactive Sales Analysis Dashboard",
       description: "An end-to-end Power BI dashboard tracking $770.64K in revenue, 117K units, and 254 products across regions and payment types.",
+      details: `<p>A comprehensive, interactive dashboard designed to monitor, track, and analyze
+          overall sales performance across multiple key dimensions, empowering management to make
+          data-driven decisions.</p>
+        <p><strong>Key Features &amp; KPIs Included:</strong></p>
+        <ul style="padding-left:20px; line-height:1.8;">
+          <li><strong>Key Performance Indicators (KPIs):</strong> Instant display of Total Revenue,
+            Total Quantity sold, Count of Products, and Total Orders.</li>
+          <li><strong>Geographical Analysis:</strong> Distribution and comparison of sales across
+            various cities (e.g., Lisbon, London, Madrid, Berlin, and Paris).</li>
+          <li><strong>Product &amp; Payment Breakdown:</strong> Identification of top-performing
+            products alongside the percentage distribution of payment methods (Credit Card, Cash,
+            and Gift Card).</li>
+          <li><strong>Sales by Manager:</strong> Tracking individual sales manager contributions and
+            performance to evaluate efficiency.</li>
+          <li><strong>Sales Trend:</strong> Monthly tracking of sales volume progression and growth
+            over the year.</li>
+          <li><strong>Dynamic Interactivity:</strong> Advanced Slicers enabling users to instantly
+            filter data by city, product, or payment method, automatically updating all charts in
+            real-time.</li>
+        </ul>`,
       tags: ["Power BI", "Power Query", "Data Cleaning"],
       link: "#",
       image: "images/sales-dashboard-v2.png",
@@ -652,6 +695,30 @@ const content = {
     {
       title: "Automated Data Cleaning & Dashboard Pipeline (n8n)",
       description: "An n8n workflow that ingests a raw, dirty dataset from Google Sheets, profiles it, lets AI plan the cleaning steps, applies the cleaning automatically, exports it to Excel, and builds a dashboard from the result.",
+      details: `<p>An end-to-end automation workflow built in n8n that eliminates manual data
+          wrangling by using LLM intelligence to diagnose, clean, and transform messy raw datasets
+          into analysis-ready formats and automated dashboard reports.</p>
+        <p><strong>Key Workflow Stages</strong></p>
+        <ul style="padding-left:20px; line-height:1.8;">
+          <li><strong>Data Ingestion:</strong> Automatically reads raw, unformatted datasets directly
+            from Google Sheets to initiate the pipeline.</li>
+          <li><strong>AI-Driven Profiling &amp; Planning:</strong> Profiles the dataset's structural
+            characteristics and passes them to an LLM node (AI Cleaning Plan) to intelligently
+            detect anomalies, missing values, and formatting inconsistencies, generating a dynamic
+            cleaning recipe.</li>
+          <li><strong>Data Transformation:</strong> Executes the prescribed transformations through
+            the Apply Cleaning node to standardize and sanitize the records.</li>
+          <li><strong>Dual-Branch Output:</strong> Splits the processed data stream into two parallel
+            actions: converting the purified dataset into a structured XLSX workbook (Cleaned Data
+            to Excel) and triggering automated reporting logic (Build Dashboard).</li>
+        </ul>
+        <p><strong>Tech Stack &amp; Integrations</strong></p>
+        <ul style="padding-left:20px; line-height:1.8;">
+          <li><strong>Workflow Automation:</strong> n8n</li>
+          <li><strong>Data Source &amp; Destination:</strong> Google Sheets, Excel (XLSX conversion)</li>
+          <li><strong>Intelligence:</strong> LLM API integration for automated data profiling and
+            cleaning strategy generation</li>
+        </ul>`,
       tags: ["n8n", "AI", "Data Cleaning", "Automation"],
       link: "#",
       image: "images/data-cleaning-pipeline-v2.png",
@@ -802,13 +869,14 @@ function openProjectModal(i){
     ${p.link && p.link !== '#' ? `<a class="btn btn-primary" href="${p.link}" target="_blank" rel="noopener">View project →</a>` : ''}
     ${p.video ? `<a class="btn btn-ghost" href="${p.video}" target="_blank" rel="noopener">▶ Watch demo</a>` : ''}
   `;
+  const bodyContent = p.details ? p.details : `<p>${escapeHtml(p.description)}</p>`;
   document.getElementById('modal-box').innerHTML = `
     ${media}
     <div class="modal-body">
       <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
       <div class="idx">${String(i + 1).padStart(2, '0')} / ${String(content.projects.length).padStart(2, '0')}</div>
       <h3>${escapeHtml(p.title)}</h3>
-      <p>${escapeHtml(p.description)}</p>
+      <div style="color:var(--text-muted); font-size:.96rem; margin-top:14px;">${bodyContent}</div>
       <div class="tag-row">${p.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>
       <div class="link-row">${links}</div>
     </div>
