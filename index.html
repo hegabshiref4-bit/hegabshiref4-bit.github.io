@@ -876,11 +876,10 @@ document.getElementById('filter-row').innerHTML = allTags.map(t => `
 
 function renderProjects(){
   document.getElementById('projects-grid').innerHTML = content.projects.map((p, i) => {
-    const thumb = (p.images && p.images.length) ? p.images[0] : p.image;
     return `
     <div class="project-card ${activeTag !== 'All' && !p.tags.includes(activeTag) ? 'hidden' : ''}" data-index="${i}">
-      ${thumb
-        ? `<img class="project-thumb" src="${thumb}" alt="${escapeHtml(p.title)}" data-fallback="1">`
+      ${p.image
+        ? `<img class="project-thumb" src="${p.image}" alt="${escapeHtml(p.title)}" data-fallback="1">`
         : `<div class="project-thumb-placeholder">No image yet</div>`
       }
       <div class="card-body">
@@ -922,7 +921,8 @@ let galleryImages = [];
 
 function openProjectModal(i){
   const p = content.projects[i];
-  const imgs = (p.images && p.images.length) ? p.images : (p.image ? [p.image] : []);
+  const rest = (p.images || []).filter(src => src !== p.image);
+  const imgs = p.image ? [p.image, ...rest] : rest;
   galleryImages = imgs;
   galleryIndex = 0;
 
