@@ -17,8 +17,8 @@
      ============================================================ */
   :root{
     --bg: #0B1210;
-    --bg-surface: #101917;
-    --bg-surface-2: #16211D;
+    --bg-surface: rgba(28, 57, 49, .58);
+    --bg-surface-2: rgba(38, 70, 60, .62);
     --text: #ECEFEC;
     --text-muted: #8FA39B;
     --text-faint: #5C6E67;
@@ -537,12 +537,41 @@
     position:fixed; inset:0; width:100%; height:100%;
     z-index:0; pointer-events:none; display:block;
   }
-  body > *:not(#bg-canvas){ position:relative; z-index:1; }
+
+
+/* Data city: responsive decorative canvas, isolated from page controls. */
+  #data-city{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+  .hero-grid-bg{opacity:.3;}
+  .hero-visual{min-width:0;}
+  @media(max-width:820px){.hero-visual{height:300px;}.hero-portrait-badge{position:absolute;top:0;left:0;}}
+
+  /* Fixed second background: visible behind every section while scrolling. */
+  body{isolation:isolate;}
+  body > #data-city{position:fixed;inset:0;width:100%;height:100%;z-index:-1;opacity:.52;pointer-events:none;}
+  body::before{z-index:-2;}
+  .hero-panel{background:rgba(8,20,18,.38);}
+  .hero-grid-bg,.hero-sparkle{display:none;}
+  .hero-visual{height:240px;}
+  .hero-portrait-badge{position:absolute;top:12px;left:50%;transform:translateX(-50%);}
+  @media(max-width:820px){
+    .hero-visual{height:100px;}
+    body > #data-city{opacity:.38;}
+  }
+
+  /* Softer translucent surfaces harmonize with the moving green backdrop. */
+  .kpi-strip{background:transparent;gap:1px;border:1px solid rgba(143,219,190,.16);}
+  .kpi,.skill-pill,.project-card,.cert-card,.contact-box{
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    border-color:rgba(143,219,190,.16);
+  }
+  .hero-panel{background:rgba(24,49,42,.36);border-color:rgba(143,219,190,.16);}
+  .modal-box{background:rgba(23,43,36,.96);}
 </style>
 </head>
 <body>
+<canvas id="data-city" aria-hidden="true"></canvas>
 
-<canvas id="bg-canvas"></canvas>
+
 
 <nav>
   <div class="wrap">
@@ -587,7 +616,7 @@
           <div class="hero-portrait-badge" id="portrait">
             <img src="images/IMG-20260710-WA0015.jpg" alt="Sherif Mohamed Hegab">
           </div>
-          <svg id="hero-iso-svg" viewBox="0 0 420 360" preserveAspectRatio="xMidYMid meet"></svg>
+          
         </div>
       </div>
 
@@ -720,7 +749,7 @@ const content = {
   // KPI strip on the hero — quick, scannable numbers
   kpis: [
     { num: "3+", label: "Years in Finance" },
-    { num: "4", label: "Projects Shipped" },
+    { num: "5", label: "Projects Shipped" },
     { num: "1,020", label: "Employees Analyzed" },
     { num: "$770K", label: "Revenue Tracked" },
   ],
@@ -1202,187 +1231,73 @@ const io = new IntersectionObserver((entries) => {
 }, { threshold: 0.15 });
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-/* ---------- hero isometric illustration ---------- */
+/* ---------- animated data city ---------- */
 (function(){
-  const svg = document.getElementById('hero-iso-svg');
-  if (!svg) return;
-  const NS = 'http://www.w3.org/2000/svg';
-
-  function isoBar(cx, baseY, h, halfW, halfH, colors){
-    const topY = baseY - h;
-    const top    = { x: cx,         y: topY - halfH };
-    const left   = { x: cx - halfW, y: topY };
-    const right  = { x: cx + halfW, y: topY };
-    const bottom = { x: cx,         y: topY + halfH };
-    const g = document.createElementNS(NS, 'g');
-
-    const leftFace = document.createElementNS(NS, 'polygon');
-    leftFace.setAttribute('points', `${left.x},${left.y} ${bottom.x},${bottom.y} ${bottom.x},${bottom.y + h} ${left.x},${left.y + h}`);
-    leftFace.setAttribute('fill', colors.left);
-    g.appendChild(leftFace);
-
-    const rightFace = document.createElementNS(NS, 'polygon');
-    rightFace.setAttribute('points', `${right.x},${right.y} ${bottom.x},${bottom.y} ${bottom.x},${bottom.y + h} ${right.x},${right.y + h}`);
-    rightFace.setAttribute('fill', colors.right);
-    g.appendChild(rightFace);
-
-    const topFace = document.createElementNS(NS, 'polygon');
-    topFace.setAttribute('points', `${top.x},${top.y} ${right.x},${right.y} ${bottom.x},${bottom.y} ${left.x},${left.y}`);
-    topFace.setAttribute('fill', colors.top);
-    g.appendChild(topFace);
-
-    return g;
-  }
-
-  const frag = document.createDocumentFragment();
-  const halfW = 30, halfH = 15;
-
-  /* back row — smaller, dimmer, shifted up-right for depth */
-  const backHeights = [60, 95, 70, 110, 80, 60];
-  backHeights.forEach((h, i) => {
-    frag.appendChild(isoBar(120 + i * 48, 190 - i * 6, h * 0.72, halfW * 0.78, halfH * 0.78, {
-      top: 'rgba(90,170,200,0.32)', left: 'rgba(90,170,200,0.18)', right: 'rgba(40,90,110,0.26)',
-    }));
-  });
-
-  /* front row — larger, brighter teal, the main skyline */
-  const frontHeights = [80, 130, 170, 120, 150, 95, 70];
-  frontHeights.forEach((h, i) => {
-    frag.appendChild(isoBar(70 + i * 46, 300 - i * 4, h, halfW, halfH, {
-      top: 'rgba(52,211,153,0.55)', left: 'rgba(52,211,153,0.30)', right: 'rgba(20,95,90,0.45)',
-    }));
-  });
-
-  svg.appendChild(frag);
-})();
-
-/* ---------- animated data-viz background ---------- */
-(function(){
-  const canvas = document.getElementById('bg-canvas');
+  const canvas = document.getElementById('data-city');
   const ctx = canvas.getContext('2d');
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const ACCENT = '52,211,153';   // --accent (green)
-  const GOLD   = '201,162,39';   // --gold
-
-  let W, H, DPR;
-  function resize(){
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
-    W = window.innerWidth;
-    H = document.documentElement.scrollHeight;
-    canvas.width = W * DPR;
-    canvas.height = H * DPR;
-    canvas.style.height = H + 'px';
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  }
-  resize();
-  window.addEventListener('resize', resize);
-  window.addEventListener('load', resize);
-  let resizeTimer;
-  const ro = new ResizeObserver(() => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(resize, 150);
-  });
-  ro.observe(document.body);
-
-  /* Bar-chart clusters scattered down the page */
-  const barGroups = Array.from({ length: 7 }, (_, i) => ({
-    x: Math.random(),            // relative x (0..1)
-    y: (i + 0.5) / 7,            // spread evenly down the page
-    bars: Array.from({ length: 5 }, () => ({
-      base: 20 + Math.random() * 40,
-      amp: 10 + Math.random() * 25,
-      speed: 0.3 + Math.random() * 0.5,
-      phase: Math.random() * Math.PI * 2,
-    })),
-    color: Math.random() > 0.5 ? ACCENT : GOLD,
-    scale: 0.7 + Math.random() * 0.6,
-  }));
-
-  /* Floating scatter points, lightly connected like a data network */
-  const dots = Array.from({ length: 34 }, () => ({
-    x: Math.random(), y: Math.random(),
-    vx: (Math.random() - 0.5) * 0.00012,
-    vy: (Math.random() - 0.5) * 0.00012,
-    r: 1.2 + Math.random() * 1.6,
-  }));
-
-  /* Slow-moving trend line, looping across the full page height */
-  const trendLines = Array.from({ length: 2 }, (_, i) => ({
-    yBase: 0.15 + i * 0.5,
-    amp: 0.05 + Math.random() * 0.04,
-    speed: 0.00006 + i * 0.00002,
-    offset: Math.random() * 1000,
-    color: i === 0 ? ACCENT : GOLD,
-  }));
-
-  let t = 0;
-  function draw(){
-    ctx.clearRect(0, 0, W, H);
-
-    /* trend lines */
-    trendLines.forEach(tl => {
-      ctx.beginPath();
-      ctx.strokeStyle = `rgba(${tl.color},0.08)`;
-      ctx.lineWidth = 1.5;
-      const step = Math.max(8, Math.floor(W / 140));
-      for (let px = 0; px <= W; px += step) {
-        const nx = px / W;
-        const y = (tl.yBase + Math.sin((nx * 4) + t * tl.speed + tl.offset) * tl.amp) * H;
-        if (px === 0) ctx.moveTo(px, y); else ctx.lineTo(px, y);
-      }
-      ctx.stroke();
-    });
-
-    /* bar chart clusters */
-    barGroups.forEach(g => {
-      const gx = g.x * W;
-      const gy = g.y * H;
-      g.bars.forEach((b, i) => {
-        const h = (b.base + Math.sin(t * b.speed + b.phase) * b.amp) * g.scale;
-        const w = 7 * g.scale;
-        const gap = 10 * g.scale;
-        ctx.fillStyle = `rgba(${g.color},0.07)`;
-        ctx.fillRect(gx + i * gap, gy - h, w, h);
-      });
-    });
-
-    /* floating dots + nearby connections */
-    const positions = dots.map(d => {
-      d.x += d.vx; d.y += d.vy;
-      if (d.x < 0 || d.x > 1) d.vx *= -1;
-      if (d.y < 0 || d.y > 1) d.vy *= -1;
-      return { x: d.x * W, y: d.y * H, r: d.r };
-    });
-    ctx.strokeStyle = `rgba(${ACCENT},0.06)`;
-    ctx.lineWidth = 1;
-    for (let i = 0; i < positions.length; i++) {
-      for (let j = i + 1; j < positions.length; j++) {
-        const dx = positions[i].x - positions[j].x;
-        const dy = positions[i].y - positions[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 160) {
-          ctx.globalAlpha = 1 - dist / 160;
-          ctx.beginPath();
-          ctx.moveTo(positions[i].x, positions[i].y);
-          ctx.lineTo(positions[j].x, positions[j].y);
-          ctx.stroke();
-        }
+  if (!ctx) return;
+  const region = document.documentElement;
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  let width=0, height=0, frame=0, visible=true, elapsed=0, last=0;
+  // Decorative financial figures, spaced across the entire viewport.
+  const figures=['1,280','24.8%','+18.6%','Σ','0.92','8,450','125.00','÷','2026','+','64.2%','3,750','×','98.4%','0.75','12,600'];
+  function paint(t){
+    ctx.clearRect(0,0,width,height);
+    const columns=Math.max(4,Math.floor(width/145));
+    const rows=Math.max(7,Math.ceil(height/100));
+    ctx.textAlign='center';
+    for(let col=0;col<columns;col++){
+      for(let row=0;row<rows;row++){
+        const i=col*rows+row;
+        const speed=12+(i%5)*3;
+        const x=(col+.5)*width/columns+Math.sin(t*.38+i*2.1)*14;
+        const y=((row+.5)*(height+100)/rows-t*speed%(height+100)+(height+100))%(height+100)-30;
+        ctx.font=`${12+(i%4)*3}px "JetBrains Mono",monospace`;
+        ctx.fillStyle=i%5===0?'rgba(201,162,90,.62)':'rgba(118,223,184,.65)';
+        ctx.fillText(figures[i%figures.length],x,y);
       }
     }
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = `rgba(${ACCENT},0.18)`;
-    positions.forEach(p => {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
+    ctx.textAlign='start';
+    const u=Math.min(width/10.8,height/8)*(1+.045*Math.sin(t*.32));
+    const cx=width*(.58+.13*Math.sin(t*.19)), cy=height*(.64+.09*Math.cos(t*.23));
+    const angle=.12*Math.sin(t*.25), ca=Math.cos(angle), sa=Math.sin(angle);
+    const project=(x,y,z)=>{
+      const rx=x*ca-y*sa, ry=x*sa+y*ca;
+      return [cx+(rx-ry)*u,cy+(rx+ry)*u*.48-z];
+    };
+    const face=(points,fill)=>{ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fillStyle=fill;ctx.fill();ctx.strokeStyle='rgba(117,255,226,.36)';ctx.lineWidth=.7;ctx.stroke();};
+    const glow=ctx.createRadialGradient(cx,cy-50,0,cx,cy-50,width*.6);
+    glow.addColorStop(0,'rgba(30,185,153,.16)');glow.addColorStop(1,'rgba(30,185,153,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,width,height);
+    for(let i=-5;i<=5;i++){
+      ctx.strokeStyle='rgba(75,170,166,.17)';ctx.lineWidth=.7;
+      ctx.beginPath();ctx.moveTo(...project(i,-5,0));ctx.lineTo(...project(i,5,0));ctx.stroke();
+      ctx.beginPath();ctx.moveTo(...project(-5,i,0));ctx.lineTo(...project(5,i,0));ctx.stroke();
+    }
+    // Back-to-front painter order keeps neighboring columns correctly occluded.
+    const blocks=[];for(let x=-2;x<=2;x++)for(let y=-2;y<=2;y++)blocks.push({x,y});
+    blocks.sort((a,b)=>(a.x+a.y)-(b.x+b.y));
+    blocks.forEach(({x,y})=>{
+      const z=(25+(Math.sin(x*2+y*4)+1)*30+21*Math.sin(t*1.05+x+y))*u/32;
+      const a=project(x,y,0),b=project(x+.72,y,0),d=project(x,y+.72,0),e=project(x+.72,y+.72,0);
+      const top=p=>[p[0],p[1]-z];
+      face([d,e,top(e),top(d)],'rgba(14,107,104,.85)');
+      face([b,e,top(e),top(b)],'rgba(8,72,78,.92)');
+      face([top(a),top(b),top(e),top(d)],'rgba(83,216,176,.72)');
     });
-
-    t += 1;
-    if (!reduceMotion) requestAnimationFrame(draw);
+    for(let i=0;i<22;i++){
+      const x=(width*.5+Math.sin(i*12.1+t*.22)*width*.48),y=height+20-((t*(18+i%5*4)+i*41)%(height+40));
+      ctx.fillStyle='rgba(115,247,210,.55)';ctx.beginPath();ctx.arc(x,y,1.2+.5*Math.sin(t+i),0,Math.PI*2);ctx.fill();
+    }
   }
-  draw();
+  function tick(now){frame=0;if(!visible||document.hidden||motion.matches)return;
+    elapsed+=last?Math.min((now-last)/1000,.06):0;last=now;paint(elapsed);frame=requestAnimationFrame(tick);
+  }
+  function sync(){cancelAnimationFrame(frame);frame=0;last=0;paint(elapsed);if(visible&&!document.hidden&&!motion.matches)frame=requestAnimationFrame(tick);}
+  new ResizeObserver(()=>{width=window.innerWidth;height=window.innerHeight;const d=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(width*d);canvas.height=Math.round(height*d);ctx.setTransform(d,0,0,d,0,0);sync();}).observe(region);
+
+  document.addEventListener('visibilitychange',sync);motion.addEventListener('change',sync);
 })();
+
 </script>
 
 </body>
